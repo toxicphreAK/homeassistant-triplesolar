@@ -1,0 +1,447 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Triple Solar heat pump",
+        "menu_options": {
+          "modbus_tls": "Local – Modbus TLS (recommended)",
+          "modbus_tcp": "Local – Modbus TCP (unencrypted)",
+          "cloud": "myTripleSolar cloud (energy counters)"
+        }
+      },
+      "modbus_tls": {
+        "title": "Pair via Modbus TLS",
+        "description": "1. Connect the heat pump to your LAN by cable.\n2. In myTripleSolar enable **pairing mode** (it stays open for one minute).\n3. Press Submit right away – Home Assistant looks for the heat pump via mDNS and pairs.",
+        "data": {
+          "modules": "Heat pump modules"
+        },
+        "data_description": {
+          "modules": "2 for a PVT heat pump 5.0 Duo (cascade)."
+        }
+      },
+      "pairing_failed": {
+        "title": "Pairing failed",
+        "description": "Re-enable pairing mode in myTripleSolar, then press Submit to try again."
+      },
+      "tls_host": {
+        "title": "Heat pump address",
+        "description": "Paired with {hostname}, but its Modbus TLS service was not found via mDNS. Enter its IP address (e.g. from your router).",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      },
+      "modbus_tcp": {
+        "title": "Modbus TCP",
+        "description": "Unencrypted Modbus TCP must first be enabled in myTripleSolar (I/O → Modbus TCP mode: Insecure). Use only in an isolated network.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit ID",
+          "modules": "Heat pump modules"
+        }
+      },
+      "cloud": {
+        "title": "myTripleSolar",
+        "description": "Unofficial interface of the myTripleSolar web app. Read-only.",
+        "data": {
+          "email": "E-mail",
+          "password": "Password"
+        }
+      },
+      "cloud_select": {
+        "title": "Choose heat pump",
+        "data": {
+          "heat_pump_id": "Heat pump"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "Password for {email}",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "progress": {
+      "pairing": "Looking for the heat pump in pairing mode (up to 45 s)…"
+    },
+    "error": {
+      "cannot_connect": "Cannot connect",
+      "invalid_auth": "Invalid credentials",
+      "no_heat_pumps": "No heat pump in this account",
+      "pairing_not_found": "No heat pump in pairing mode found. Is pairing mode enabled, and is Home Assistant in the same network (mDNS, UDP 5353)?",
+      "pairing_failed": "Pairing failed – see the log",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Already configured",
+      "reauth_successful": "Signed in again"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Polling interval",
+          "modules": "Heat pump modules",
+          "unit_id": "Unit ID"
+        }
+      }
+    }
+  },
+  "selector": {
+    "modules": {
+      "options": {
+        "1": "1 (PVT heat pump 5.0)",
+        "2": "2 (Duo / cascade)"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "heat_pump_state": {
+        "name": "Operating state",
+        "state": {
+          "fault": "Fault",
+          "off": "Off",
+          "dhw_prio": "Hot water (priority)",
+          "dhw_no_prio": "Hot water",
+          "space_heating_prio": "Heating (priority)",
+          "space_heating_no_prio": "Heating",
+          "space_cooling_prio": "Cooling (priority)",
+          "space_cooling_no_prio": "Cooling",
+          "program_active": "Program active",
+          "dhw_handover": "Handover to hot water",
+          "space_heating_handover": "Handover to heating",
+          "space_cooling_handover": "Handover to cooling"
+        }
+      },
+      "rated_power": {
+        "name": "Rated power"
+      },
+      "active_messages": {
+        "name": "Active messages"
+      },
+      "dhw_status": {
+        "name": "Hot water status",
+        "state": {
+          "fault": "Fault",
+          "off": "Off",
+          "running": "Running",
+          "blocked": "Blocked",
+          "await_heat_sources": "Awaiting heat sources",
+          "prepare_enable_dhw_valve": "Opening DHW valve",
+          "prepare_disable_dhw_valve": "Closing DHW valve"
+        }
+      },
+      "dhw_modulation": {
+        "name": "Hot water modulation"
+      },
+      "dhw_tank_temp": {
+        "name": "Hot water tank temperature"
+      },
+      "dhw_tank_setpoint": {
+        "name": "Hot water tank setpoint"
+      },
+      "dhw_profile": {
+        "name": "Hot water profile",
+        "state": {
+          "blocked": "Blocked",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Comfort"
+        }
+      },
+      "sh_status": {
+        "name": "Heating status",
+        "state": {
+          "fault": "Fault",
+          "off": "Off",
+          "running": "Running",
+          "blocked": "Blocked",
+          "await_heat_sources": "Awaiting heat sources",
+          "prepare_enable_dhw_valve": "Opening DHW valve",
+          "prepare_disable_dhw_valve": "Closing DHW valve"
+        }
+      },
+      "sh_modulation": {
+        "name": "Heating modulation"
+      },
+      "sh_supply_temp": {
+        "name": "Heating supply temperature"
+      },
+      "sh_supply_setpoint": {
+        "name": "Heating supply setpoint"
+      },
+      "sh_profile": {
+        "name": "Heating profile",
+        "state": {
+          "blocked": "Blocked",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Comfort"
+        }
+      },
+      "sc_status": {
+        "name": "Cooling status",
+        "state": {
+          "fault": "Fault",
+          "off": "Off",
+          "running": "Running",
+          "blocked": "Blocked",
+          "await_heat_sources": "Awaiting heat sources",
+          "prepare_enable_dhw_valve": "Opening DHW valve",
+          "prepare_disable_dhw_valve": "Closing DHW valve"
+        }
+      },
+      "sc_modulation": {
+        "name": "Cooling modulation"
+      },
+      "sc_supply_temp": {
+        "name": "Cooling supply temperature"
+      },
+      "sc_supply_setpoint": {
+        "name": "Cooling supply setpoint"
+      },
+      "sc_modulation_setpoint": {
+        "name": "Cooling modulation setpoint (OpenTherm)"
+      },
+      "ambient_temp": {
+        "name": "Outdoor temperature"
+      },
+      "room_temp": {
+        "name": "Room temperature"
+      },
+      "room_setpoint": {
+        "name": "Room setpoint"
+      },
+      "relative_humidity": {
+        "name": "Relative humidity"
+      },
+      "input_modulation": {
+        "name": "Requested modulation"
+      },
+      "module_state": {
+        "name": "Module {module} state",
+        "state": {
+          "fault": "Fault",
+          "off": "Off",
+          "heating_standby": "Heating standby",
+          "heating_pump_startup": "Heating pump start-up",
+          "heating_compressor_startup": "Heating compressor start-up",
+          "heating_active": "Heating",
+          "heating_wind_down": "Heating wind-down",
+          "cooling_standby": "Cooling standby",
+          "cooling_pump_startup": "Cooling pump start-up",
+          "cooling_compressor_startup": "Cooling compressor start-up",
+          "cooling_active": "Cooling",
+          "cooling_wind_down": "Cooling wind-down"
+        }
+      },
+      "compressor_frequency": {
+        "name": "Module {module} compressor frequency"
+      },
+      "source_pump": {
+        "name": "Module {module} source pump"
+      },
+      "sink_pump": {
+        "name": "Module {module} circulation pump"
+      },
+      "source_return_temp": {
+        "name": "Module {module} source return (from PVT)"
+      },
+      "source_supply_temp": {
+        "name": "Module {module} source supply (to PVT)"
+      },
+      "sink_return_temp": {
+        "name": "Module {module} heating return"
+      },
+      "sink_supply_temp": {
+        "name": "Module {module} heating supply"
+      },
+      "electric_power": {
+        "name": "Module {module} electric power"
+      },
+      "sink_power": {
+        "name": "Module {module} thermal power"
+      },
+      "compressor_starts": {
+        "name": "Module {module} compressor starts"
+      },
+      "cop": {
+        "name": "Module {module} COP"
+      },
+      "electric_energy": {
+        "name": "Module {module} electric energy (integrated)"
+      },
+      "heat_energy_heating": {
+        "name": "Module {module} heat produced (integrated)"
+      },
+      "heat_energy_cooling": {
+        "name": "Module {module} cooling produced (integrated)"
+      },
+      "dhw_status_cloud": {
+        "name": "Hot water status"
+      },
+      "heating_status_cloud": {
+        "name": "Heating status"
+      },
+      "dhw_heater_modulation": {
+        "name": "Hot water heating element"
+      },
+      "sh_heater_modulation": {
+        "name": "Heating element"
+      },
+      "source_return_temp_cloud": {
+        "name": "Source return (from PVT)"
+      },
+      "source_supply_temp_cloud": {
+        "name": "Source supply (to PVT)"
+      },
+      "sink_return_temp_cloud": {
+        "name": "Heating return"
+      },
+      "sink_supply_temp_cloud": {
+        "name": "Heating supply"
+      },
+      "sink_pump_flow": {
+        "name": "Heating flow"
+      },
+      "source_pump_flow": {
+        "name": "Source flow"
+      },
+      "sink_pressure": {
+        "name": "Heating pressure"
+      },
+      "source_pressure": {
+        "name": "Source pressure"
+      },
+      "alerts": {
+        "name": "Alerts"
+      },
+      "software_version": {
+        "name": "Firmware"
+      },
+      "connection_type": {
+        "name": "Cloud connection"
+      },
+      "sh_electric_energy": {
+        "name": "Heating electric energy"
+      },
+      "sh_thermal_energy": {
+        "name": "Heating heat produced"
+      },
+      "dhw_electric_energy": {
+        "name": "Hot water electric energy"
+      },
+      "dhw_thermal_energy": {
+        "name": "Hot water heat produced"
+      },
+      "sc_electric_energy": {
+        "name": "Cooling electric energy"
+      },
+      "sc_thermal_energy": {
+        "name": "Cooling produced"
+      },
+      "total_electric_energy": {
+        "name": "Total electric energy"
+      },
+      "total_thermal_energy": {
+        "name": "Total heat produced"
+      }
+    },
+    "binary_sensor": {
+      "fault": {
+        "name": "Fault"
+      },
+      "dhw_demand": {
+        "name": "Hot water demand"
+      },
+      "dhw_valve": {
+        "name": "Hot water valve"
+      },
+      "sh_demand": {
+        "name": "Heating demand"
+      },
+      "sc_demand": {
+        "name": "Cooling demand"
+      },
+      "cooling_valve": {
+        "name": "Module {module} cooling valve"
+      },
+      "heating_active": {
+        "name": "Heating active"
+      },
+      "dhw_active": {
+        "name": "Hot water active"
+      }
+    },
+    "select": {
+      "dhw_profile_set": {
+        "name": "Hot water profile",
+        "state": {
+          "blocked": "Blocked",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Comfort"
+        }
+      },
+      "sh_profile_set": {
+        "name": "Heating profile",
+        "state": {
+          "blocked": "Blocked",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Comfort"
+        }
+      },
+      "sc_profile_set": {
+        "name": "Cooling profile",
+        "state": {
+          "blocked": "Blocked",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Comfort"
+        }
+      },
+      "control_operating_mode": {
+        "name": "Modbus control: operating mode",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
+      }
+    },
+    "number": {
+      "dhw_profile_setpoint": {
+        "name": "Hot water setpoint {profile}"
+      },
+      "dhw_profile_hysteresis": {
+        "name": "Hot water hysteresis {profile}"
+      },
+      "dhw_profile_modulation": {
+        "name": "Hot water modulation {profile}"
+      },
+      "control_modulation": {
+        "name": "Modbus control: modulation"
+      },
+      "control_power_budget": {
+        "name": "Modbus control: power budget"
+      }
+    },
+    "switch": {
+      "sh_enable": {
+        "name": "Heating"
+      },
+      "dhw_enable": {
+        "name": "Hot water"
+      },
+      "sc_enable": {
+        "name": "Cooling"
+      }
+    }
+  }
+}

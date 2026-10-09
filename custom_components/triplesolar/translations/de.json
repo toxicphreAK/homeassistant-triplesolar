@@ -1,0 +1,447 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Triple-Solar-Wärmepumpe verbinden",
+        "menu_options": {
+          "modbus_tls": "Lokal – Modbus TLS (empfohlen)",
+          "modbus_tcp": "Lokal – Modbus TCP (unverschlüsselt)",
+          "cloud": "myTripleSolar-Cloud (Energiezähler)"
+        }
+      },
+      "modbus_tls": {
+        "title": "Koppeln per Modbus TLS",
+        "description": "1. Die Wärmepumpe per Kabel ins Heimnetz bringen.\n2. In myTripleSolar den **Kopplungsmodus** einschalten (er ist eine Minute offen).\n3. Sofort auf Absenden klicken – Home Assistant sucht die Anlage per mDNS und koppelt.",
+        "data": {
+          "modules": "Wärmepumpenmodule"
+        },
+        "data_description": {
+          "modules": "2 bei einer PVT-Wärmepumpe 5.0 Duo (Kaskade)."
+        }
+      },
+      "pairing_failed": {
+        "title": "Kopplung fehlgeschlagen",
+        "description": "Kopplungsmodus in myTripleSolar erneut einschalten, dann Absenden für einen neuen Versuch."
+      },
+      "tls_host": {
+        "title": "Adresse der Wärmepumpe",
+        "description": "Gekoppelt mit {hostname}, aber deren Modbus-TLS-Dienst war per mDNS nicht zu finden. IP-Adresse eingeben (z. B. aus dem Router).",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      },
+      "modbus_tcp": {
+        "title": "Modbus TCP",
+        "description": "Unverschlüsseltes Modbus TCP muss erst in myTripleSolar eingeschaltet werden (I/O → Modbus-TCP-Modus: Unsicher). Nur in einem abgeschotteten Netz verwenden.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit-ID",
+          "modules": "Wärmepumpenmodule"
+        }
+      },
+      "cloud": {
+        "title": "myTripleSolar",
+        "description": "Inoffizielle Schnittstelle der myTripleSolar-Web-App. Nur lesend.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
+      },
+      "cloud_select": {
+        "title": "Wärmepumpe wählen",
+        "data": {
+          "heat_pump_id": "Wärmepumpe"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneut anmelden",
+        "description": "Passwort für {email}",
+        "data": {
+          "password": "Passwort"
+        }
+      }
+    },
+    "progress": {
+      "pairing": "Suche die Wärmepumpe im Kopplungsmodus (bis 45 s)…"
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_auth": "Anmeldedaten ungültig",
+      "no_heat_pumps": "Keine Wärmepumpe in diesem Konto",
+      "pairing_not_found": "Keine Wärmepumpe im Kopplungsmodus gefunden. Ist der Kopplungsmodus an, und ist Home Assistant im selben Netz (mDNS, UDP 5353)?",
+      "pairing_failed": "Kopplung fehlgeschlagen – Details im Log",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "abort": {
+      "already_configured": "Bereits eingerichtet",
+      "reauth_successful": "Erneut angemeldet"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "data": {
+          "scan_interval": "Abfrageintervall",
+          "modules": "Wärmepumpenmodule",
+          "unit_id": "Unit-ID"
+        }
+      }
+    }
+  },
+  "selector": {
+    "modules": {
+      "options": {
+        "1": "1 (PVT-Wärmepumpe 5.0)",
+        "2": "2 (Duo / Kaskade)"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "heat_pump_state": {
+        "name": "Betriebszustand",
+        "state": {
+          "fault": "Störung",
+          "off": "Aus",
+          "dhw_prio": "Warmwasser (Vorrang)",
+          "dhw_no_prio": "Warmwasser",
+          "space_heating_prio": "Heizen (Vorrang)",
+          "space_heating_no_prio": "Heizen",
+          "space_cooling_prio": "Kühlen (Vorrang)",
+          "space_cooling_no_prio": "Kühlen",
+          "program_active": "Programm aktiv",
+          "dhw_handover": "Übergabe Warmwasser",
+          "space_heating_handover": "Übergabe Heizen",
+          "space_cooling_handover": "Übergabe Kühlen"
+        }
+      },
+      "rated_power": {
+        "name": "Nennleistung"
+      },
+      "active_messages": {
+        "name": "Aktive Meldungen"
+      },
+      "dhw_status": {
+        "name": "Warmwasser Status",
+        "state": {
+          "fault": "Störung",
+          "off": "Aus",
+          "running": "Läuft",
+          "blocked": "Gesperrt",
+          "await_heat_sources": "Wartet auf Wärmeerzeuger",
+          "prepare_enable_dhw_valve": "Warmwasserventil öffnet",
+          "prepare_disable_dhw_valve": "Warmwasserventil schließt"
+        }
+      },
+      "dhw_modulation": {
+        "name": "Warmwasser Modulation"
+      },
+      "dhw_tank_temp": {
+        "name": "Warmwasser Speichertemperatur"
+      },
+      "dhw_tank_setpoint": {
+        "name": "Warmwasser Solltemperatur"
+      },
+      "dhw_profile": {
+        "name": "Warmwasser Profil",
+        "state": {
+          "blocked": "Gesperrt",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Komfort"
+        }
+      },
+      "sh_status": {
+        "name": "Heizen Status",
+        "state": {
+          "fault": "Störung",
+          "off": "Aus",
+          "running": "Läuft",
+          "blocked": "Gesperrt",
+          "await_heat_sources": "Wartet auf Wärmeerzeuger",
+          "prepare_enable_dhw_valve": "Warmwasserventil öffnet",
+          "prepare_disable_dhw_valve": "Warmwasserventil schließt"
+        }
+      },
+      "sh_modulation": {
+        "name": "Heizen Modulation"
+      },
+      "sh_supply_temp": {
+        "name": "Heizen Vorlauftemperatur"
+      },
+      "sh_supply_setpoint": {
+        "name": "Heizen Vorlauf-Soll"
+      },
+      "sh_profile": {
+        "name": "Heizen Profil",
+        "state": {
+          "blocked": "Gesperrt",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Komfort"
+        }
+      },
+      "sc_status": {
+        "name": "Kühlen Status",
+        "state": {
+          "fault": "Störung",
+          "off": "Aus",
+          "running": "Läuft",
+          "blocked": "Gesperrt",
+          "await_heat_sources": "Wartet auf Wärmeerzeuger",
+          "prepare_enable_dhw_valve": "Warmwasserventil öffnet",
+          "prepare_disable_dhw_valve": "Warmwasserventil schließt"
+        }
+      },
+      "sc_modulation": {
+        "name": "Kühlen Modulation"
+      },
+      "sc_supply_temp": {
+        "name": "Kühlen Vorlauftemperatur"
+      },
+      "sc_supply_setpoint": {
+        "name": "Kühlen Vorlauf-Soll"
+      },
+      "sc_modulation_setpoint": {
+        "name": "Kühlen Modulations-Soll (OpenTherm)"
+      },
+      "ambient_temp": {
+        "name": "Außentemperatur"
+      },
+      "room_temp": {
+        "name": "Raumtemperatur"
+      },
+      "room_setpoint": {
+        "name": "Raum-Solltemperatur"
+      },
+      "relative_humidity": {
+        "name": "Relative Luftfeuchte"
+      },
+      "input_modulation": {
+        "name": "Angeforderte Modulation"
+      },
+      "module_state": {
+        "name": "Modul {module} Zustand",
+        "state": {
+          "fault": "Störung",
+          "off": "Aus",
+          "heating_standby": "Heizen Bereitschaft",
+          "heating_pump_startup": "Heizen Pumpenanlauf",
+          "heating_compressor_startup": "Heizen Verdichteranlauf",
+          "heating_active": "Heizen aktiv",
+          "heating_wind_down": "Heizen Nachlauf",
+          "cooling_standby": "Kühlen Bereitschaft",
+          "cooling_pump_startup": "Kühlen Pumpenanlauf",
+          "cooling_compressor_startup": "Kühlen Verdichteranlauf",
+          "cooling_active": "Kühlen aktiv",
+          "cooling_wind_down": "Kühlen Nachlauf"
+        }
+      },
+      "compressor_frequency": {
+        "name": "Modul {module} Verdichterfrequenz"
+      },
+      "source_pump": {
+        "name": "Modul {module} Quellenpumpe"
+      },
+      "sink_pump": {
+        "name": "Modul {module} Umwälzpumpe"
+      },
+      "source_return_temp": {
+        "name": "Modul {module} Quelle Rücklauf (vom PVT)"
+      },
+      "source_supply_temp": {
+        "name": "Modul {module} Quelle Vorlauf (zum PVT)"
+      },
+      "sink_return_temp": {
+        "name": "Modul {module} Heizung Rücklauf"
+      },
+      "sink_supply_temp": {
+        "name": "Modul {module} Heizung Vorlauf"
+      },
+      "electric_power": {
+        "name": "Modul {module} elektrische Leistung"
+      },
+      "sink_power": {
+        "name": "Modul {module} Wärmeleistung"
+      },
+      "compressor_starts": {
+        "name": "Modul {module} Verdichterstarts"
+      },
+      "cop": {
+        "name": "Modul {module} Leistungszahl"
+      },
+      "electric_energy": {
+        "name": "Modul {module} Stromverbrauch (integriert)"
+      },
+      "heat_energy_heating": {
+        "name": "Modul {module} Wärme erzeugt (integriert)"
+      },
+      "heat_energy_cooling": {
+        "name": "Modul {module} Kälte erzeugt (integriert)"
+      },
+      "dhw_status_cloud": {
+        "name": "Warmwasser Status"
+      },
+      "heating_status_cloud": {
+        "name": "Heizen Status"
+      },
+      "dhw_heater_modulation": {
+        "name": "Warmwasser Heizstab"
+      },
+      "sh_heater_modulation": {
+        "name": "Heizen Heizstab"
+      },
+      "source_return_temp_cloud": {
+        "name": "Quelle Rücklauf (vom PVT)"
+      },
+      "source_supply_temp_cloud": {
+        "name": "Quelle Vorlauf (zum PVT)"
+      },
+      "sink_return_temp_cloud": {
+        "name": "Heizung Rücklauf"
+      },
+      "sink_supply_temp_cloud": {
+        "name": "Heizung Vorlauf"
+      },
+      "sink_pump_flow": {
+        "name": "Durchfluss Heizung"
+      },
+      "source_pump_flow": {
+        "name": "Durchfluss Quelle"
+      },
+      "sink_pressure": {
+        "name": "Druck Heizung"
+      },
+      "source_pressure": {
+        "name": "Druck Quelle"
+      },
+      "alerts": {
+        "name": "Meldungen"
+      },
+      "software_version": {
+        "name": "Firmware"
+      },
+      "connection_type": {
+        "name": "Cloud-Verbindung"
+      },
+      "sh_electric_energy": {
+        "name": "Heizen Stromverbrauch"
+      },
+      "sh_thermal_energy": {
+        "name": "Heizen Wärme erzeugt"
+      },
+      "dhw_electric_energy": {
+        "name": "Warmwasser Stromverbrauch"
+      },
+      "dhw_thermal_energy": {
+        "name": "Warmwasser Wärme erzeugt"
+      },
+      "sc_electric_energy": {
+        "name": "Kühlen Stromverbrauch"
+      },
+      "sc_thermal_energy": {
+        "name": "Kühlen Kälte erzeugt"
+      },
+      "total_electric_energy": {
+        "name": "Stromverbrauch gesamt"
+      },
+      "total_thermal_energy": {
+        "name": "Wärme erzeugt gesamt"
+      }
+    },
+    "binary_sensor": {
+      "fault": {
+        "name": "Störung"
+      },
+      "dhw_demand": {
+        "name": "Warmwasser Anforderung"
+      },
+      "dhw_valve": {
+        "name": "Warmwasserventil"
+      },
+      "sh_demand": {
+        "name": "Heizen Anforderung"
+      },
+      "sc_demand": {
+        "name": "Kühlen Anforderung"
+      },
+      "cooling_valve": {
+        "name": "Modul {module} Kühlventil"
+      },
+      "heating_active": {
+        "name": "Heizen aktiv"
+      },
+      "dhw_active": {
+        "name": "Warmwasser aktiv"
+      }
+    },
+    "select": {
+      "dhw_profile_set": {
+        "name": "Warmwasser Profil",
+        "state": {
+          "blocked": "Gesperrt",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Komfort"
+        }
+      },
+      "sh_profile_set": {
+        "name": "Heizen Profil",
+        "state": {
+          "blocked": "Gesperrt",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Komfort"
+        }
+      },
+      "sc_profile_set": {
+        "name": "Kühlen Profil",
+        "state": {
+          "blocked": "Gesperrt",
+          "eco": "Eco",
+          "normal": "Normal",
+          "comfort": "Komfort"
+        }
+      },
+      "control_operating_mode": {
+        "name": "Modbus-Steuerung: Betriebsart",
+        "state": {
+          "off": "Aus",
+          "heating": "Heizen",
+          "cooling": "Kühlen"
+        }
+      }
+    },
+    "number": {
+      "dhw_profile_setpoint": {
+        "name": "Warmwasser Soll {profile}"
+      },
+      "dhw_profile_hysteresis": {
+        "name": "Warmwasser Hysterese {profile}"
+      },
+      "dhw_profile_modulation": {
+        "name": "Warmwasser Modulation {profile}"
+      },
+      "control_modulation": {
+        "name": "Modbus-Steuerung: Modulation"
+      },
+      "control_power_budget": {
+        "name": "Modbus-Steuerung: Leistungsbudget"
+      }
+    },
+    "switch": {
+      "sh_enable": {
+        "name": "Heizen"
+      },
+      "dhw_enable": {
+        "name": "Warmwasser"
+      },
+      "sc_enable": {
+        "name": "Kühlen"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+[project]
+name = "homeassistant-triplesolar"
+version = "0.1.0"
+description = "Home Assistant: Triple Solar PVT-Wärmepumpe 5.0 (Modbus TLS/TCP, myTripleSolar)"
+requires-python = ">=3.13"
+
+[dependency-groups]
+dev = ["pytest-homeassistant-custom-component", "ruff"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "ARG"]
+ignore = ["E731"]
+
+[tool.ruff.lint.per-file-ignores]
+# Übersetzungstexte sind Fließtext — Umbrechen machte sie unlesbar.
+"tools/gen_translations.py" = ["E501"]
+# Signaturen legt Home Assistant fest (hass, user_input, kwargs …).
+"custom_components/**" = ["ARG"]
+"tests/**" = ["ARG"]

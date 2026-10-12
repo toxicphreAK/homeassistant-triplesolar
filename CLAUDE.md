@@ -19,6 +19,7 @@ uv pip install --python .venv/bin/python pytest-homeassistant-custom-component r
 ```
 
 `tools/quality/` is vendored from llmdev (re-sync with `/quality-setup +update`, don't edit locally; excluded from ruff).
+`/quality-triage` (`.claude/commands/quality-triage.md`) turns the ranked clusters into analysed GitHub issues; all `gh` calls run as `toxicphreAK` via `GH_TOKEN=$(gh auth token --user toxicphreAK)`.
 
 `tools/probe_modbus.py` (`pair`, `read`) and `tools/probe_cloud.py` run against a real unit. They write `certs/` (gitignored, contains a private key). The integration has **not yet run against a real heat pump**. Open questions are tracked under "Offene Punkte" in `docs/modbus-api.md` and `docs/cloud-api.md`.
 

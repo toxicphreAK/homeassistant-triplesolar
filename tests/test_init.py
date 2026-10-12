@@ -166,6 +166,33 @@ async def test_unsupported_register_is_skipped(hass: HomeAssistant, server: Fake
     assert (1, 4, 0x124) not in server.requests
 
 
+async def test_unsupported_register_makes_entity_unavailable(
+    hass: HomeAssistant, server: FakeModbusServer
+) -> None:
+    """Fehlt ein Register, ist die Entität dazu nicht verfügbar — auf jeder Plattform."""
+    del server.input[0x25]  # dhw_tank_temp
+    del server.holding[0x310A]  # dhw_profile_set
+    del server.holding[0x3601]  # dhw_eco_setpoint
+    del server.holding[0x3101]  # dhw_enable
+    entry = await setup_modbus(hass, server)
+    assert entry.runtime_data.unsupported >= {
+        "dhw_tank_temp",
+        "dhw_profile_set",
+        "dhw_eco_setpoint",
+        "dhw_enable",
+    }
+
+    assert hass.states.get(eid(hass, "sensor", "dhw_tank_temp")).state == STATE_UNAVAILABLE
+    assert hass.states.get(eid(hass, "select", "dhw_profile_set")).state == STATE_UNAVAILABLE
+    assert hass.states.get(eid(hass, "number", "dhw_eco_setpoint")).state == STATE_UNAVAILABLE
+    assert hass.states.get(eid(hass, "switch", "dhw_enable")).state == STATE_UNAVAILABLE
+    # Nachbarn derselben Plattform bleiben verfügbar.
+    assert hass.states.get(eid(hass, "sensor", "ambient_temp")).state == "-3.5"
+    assert hass.states.get(eid(hass, "select", "sh_profile_set")).state != STATE_UNAVAILABLE
+    assert hass.states.get(eid(hass, "number", "dhw_normal_setpoint")).state == "50.0"
+    assert hass.states.get(eid(hass, "switch", "sh_enable")).state == "on"
+
+
 async def test_connection_loss_makes_entities_unavailable(
     hass: HomeAssistant, server: FakeModbusServer
 ) -> None:

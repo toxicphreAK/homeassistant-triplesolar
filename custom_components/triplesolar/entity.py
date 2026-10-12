@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from homeassistant.const import CONF_HOST
 from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
@@ -47,3 +48,20 @@ class TripleSolarEntity[T: (ModbusCoordinator, CloudCoordinator)](CoordinatorEnt
             name=f"{MODEL} (Cloud)" if is_cloud else MODEL,
             configuration_url="https://my.triplesolar.eu",
         )
+
+
+class ModbusRegisterEntity(TripleSolarEntity[ModbusCoordinator]):
+    """Entität, deren Wert genau ein Modbus-Register ist.
+
+    Der ``key`` der Description ist der Registerkey. Kennt die Firmware das
+    Register nicht (``coordinator.unsupported``), ist die Entität nicht
+    verfügbar statt dauerhaft ``unknown``.
+    """
+
+    def __init__(self, coordinator: ModbusCoordinator, description: EntityDescription) -> None:
+        super().__init__(coordinator, description.key)
+        self.entity_description = description
+
+    @property
+    def available(self) -> bool:
+        return super().available and self.entity_description.key not in self.coordinator.unsupported

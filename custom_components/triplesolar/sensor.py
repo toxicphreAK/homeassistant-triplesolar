@@ -29,7 +29,7 @@ from homeassistant.util import dt as dt_util
 from . import TripleSolarConfigEntry
 from .const import MAX_INTEGRATION_GAP_S
 from .coordinator import CloudCoordinator, ModbusCoordinator
-from .entity import TripleSolarEntity
+from .entity import ModbusRegisterEntity, TripleSolarEntity
 from .registers import (
     MESSAGE_COUNT,
     CircuitStatus,
@@ -211,16 +211,8 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class ModbusRegisterSensor(TripleSolarEntity[ModbusCoordinator], SensorEntity):
+class ModbusRegisterSensor(ModbusRegisterEntity, SensorEntity):
     entity_description: RegisterSensorDescription
-
-    def __init__(self, coordinator: ModbusCoordinator, description: RegisterSensorDescription) -> None:
-        super().__init__(coordinator, description.key)
-        self.entity_description = description
-
-    @property
-    def available(self) -> bool:
-        return super().available and self.entity_description.key not in self.coordinator.unsupported
 
     @property
     def native_value(self) -> Any:

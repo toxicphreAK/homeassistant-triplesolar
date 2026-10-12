@@ -17,7 +17,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import TripleSolarConfigEntry
 from .coordinator import ModbusCoordinator
-from .entity import TripleSolarEntity
+from .entity import ModbusRegisterEntity
 from .registers import OperatingMode, Profile
 
 
@@ -56,17 +56,12 @@ async def async_setup_entry(
     async_add_entities(TsSelect(coordinator, desc) for desc in SELECTS)
 
 
-class TsSelect(TripleSolarEntity[ModbusCoordinator], SelectEntity):
+class TsSelect(ModbusRegisterEntity, SelectEntity):
     entity_description: TsSelectDescription
 
     def __init__(self, coordinator: ModbusCoordinator, description: TsSelectDescription) -> None:
-        super().__init__(coordinator, description.key)
-        self.entity_description = description
+        super().__init__(coordinator, description)
         self._attr_options = [m.name.lower() for m in description.enum]
-
-    @property
-    def available(self) -> bool:
-        return super().available and self.entity_description.key not in self.coordinator.unsupported
 
     @property
     def current_option(self) -> str | None:

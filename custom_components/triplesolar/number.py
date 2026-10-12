@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import TripleSolarConfigEntry
 from .coordinator import ModbusCoordinator
-from .entity import TripleSolarEntity
+from .entity import ModbusRegisterEntity
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -94,19 +94,14 @@ async def async_setup_entry(
     async_add_entities(TsNumber(coordinator, desc) for desc in NUMBERS)
 
 
-class TsNumber(TripleSolarEntity[ModbusCoordinator], NumberEntity):
+class TsNumber(ModbusRegisterEntity, NumberEntity):
     entity_description: TsNumberDescription
 
     def __init__(self, coordinator: ModbusCoordinator, description: TsNumberDescription) -> None:
-        super().__init__(coordinator, description.key)
-        self.entity_description = description
+        super().__init__(coordinator, description)
         reg = coordinator.registers[description.key]
         self._attr_native_min_value = reg.minimum
         self._attr_native_max_value = reg.maximum
-
-    @property
-    def available(self) -> bool:
-        return super().available and self.entity_description.key not in self.coordinator.unsupported
 
     @property
     def native_value(self) -> float | None:

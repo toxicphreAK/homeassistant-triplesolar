@@ -4,3 +4,8 @@ __pycache__/
 .ruff_cache/
 # Kopplungsergebnis der Probe-Tools — enthält den privaten Schlüssel.
 certs/
+# Wartbarkeits-Triage: nur die Baseline wird eingecheckt.
+reports/code-quality/*
+!reports/code-quality/baseline.json
+.quality-clusters.json
+.quality-issues.json

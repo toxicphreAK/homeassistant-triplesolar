@@ -1,0 +1,9 @@
+{
+  "roots": {"python": ["custom_components", "tests", "tools"], "typescript": [], "go": [], "rust": [], "kotlin": []},
+  "layers": {"order": []},
+  "exclude_dirs": ["quality", "certs"],
+  "report_dir": "reports/code-quality",
+  "thresholds": {"complexity_rank": "D", "mi_floor": 20, "vulture_min_confidence": 80, "gocyclo_over": 15, "jscpd_min_lines": 12},
+  "churn": {"enabled": true, "days": 180, "weight": 1.0},
+  "tools": {"disabled": []}
+}

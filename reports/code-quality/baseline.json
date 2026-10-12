@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "tool_finding_counts": {
+    "import-analysis": 0,
+    "radon": 0,
+    "vulture": 2,
+    "jscpd": 2
+  },
+  "structural_signatures": [],
+  "files_below_mi_floor": 0,
+  "run": {
+    "run_id": "258f54f0aa57",
+    "generated_at": "2026-10-12T06:11:47+00:00",
+    "generated_at_ts": 1791785507.409112,
+    "partial": false,
+    "tools": [
+      "clippy",
+      "detekt",
+      "go-layering",
+      "gocyclo",
+      "import-analysis",
+      "jscpd",
+      "knip",
+      "madge",
+      "radon",
+      "staticcheck",
+      "vulture"
+    ]
+  }
+}

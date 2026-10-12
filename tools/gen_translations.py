@@ -1,7 +1,7 @@
 """Erzeugt strings.json + translations/{en,de}.json aus EINER Tabelle.
 
 Aufruf: python tools/gen_translations.py — danach prüft der Test
-``test_translations.py``, dass jede verwendete translation_key existiert.
+``tests/test_misc.py``, dass jede verwendete translation_key existiert.
 """
 
 from __future__ import annotations

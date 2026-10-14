@@ -11,6 +11,10 @@ Authentifizierung: ``POST /auth/login`` mit ``{email, password}`` →
 ``{accessToken, refreshToken}`` (JWT mit ``exp``); ``POST /auth/refresh``
 mit ``{refreshToken}`` und dem alten Access-Token als Bearer. Das Frontend
 erneuert 15 s vor Ablauf; dasselbe hier.
+
+Der Server nimmt nur Anfragen mit ``Origin: https://my.triplesolar.eu`` an
+(sonst HTTP 403 „Unknown origin", noch vor der Prüfung der Zugangsdaten).
+Der Browser setzt den Header selbst; hier wird er mitgeschickt.
 """
 
 from __future__ import annotations
@@ -23,6 +27,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import aiohttp
+from yarl import URL
 
 BASE_URL = "https://my.triplesolar.eu"
 REFRESH_MARGIN_S = 15
@@ -106,6 +111,15 @@ class CloudAuthError(CloudError):
     """Anmeldung abgelehnt — Zugangsdaten prüfen (Reauth)."""
 
 
+class CloudRejectedError(CloudError):
+    """Server weist den Client ab, bevor er die Zugangsdaten prüft.
+
+    Bisher nur die Herkunftsprüfung (HTTP 403 „Unknown origin"). Tritt das
+    trotz ``Origin``-Header auf, hat sich die inoffizielle Schnittstelle
+    geändert — ein Reauth hilft dann nicht.
+    """
+
+
 @dataclass(frozen=True, slots=True)
 class CloudHeatPump:
     id: str
@@ -156,6 +170,7 @@ class CloudClient:
         self._email = email
         self._password = password
         self._base = base_url.rstrip("/")
+        self._origin = str(URL(self._base).origin())
         self._timeout = aiohttp.ClientTimeout(total=timeout)
         self._access: str | None = None
         self._refresh: str | None = None
@@ -192,7 +207,7 @@ class CloudClient:
             self._refresh = data["refreshToken"]
 
     async def _post_json(self, path: str, body: dict[str, Any], *, auth: bool) -> dict[str, Any]:
-        headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json", "Origin": self._origin}
         if auth and self._access:
             headers["Authorization"] = f"Bearer {self._access}"
         try:
@@ -200,6 +215,8 @@ class CloudClient:
                 self._base + path, json=body, headers=headers, timeout=self._timeout
             ) as resp:
                 text = await resp.text()
+                if resp.status == 403 and "unknown origin" in text.lower():
+                    raise CloudRejectedError(f"{path}: HTTP 403 {text[:200]} (Herkunftsprüfung)")
                 if resp.status in (400, 401, 403):
                     raise CloudAuthError(f"{path}: HTTP {resp.status} {text[:200]}")
                 if resp.status >= 300:

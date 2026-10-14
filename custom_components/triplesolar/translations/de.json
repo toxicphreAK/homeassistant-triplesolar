@@ -69,6 +69,7 @@
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen",
       "invalid_auth": "Anmeldedaten ungültig",
+      "cloud_rejected": "Die myTripleSolar-Cloud hat die Anfrage abgelehnt, bevor sie die Anmeldedaten geprüft hat. Vermutlich hat sich die inoffizielle Schnittstelle geändert; Details stehen im Log.",
       "no_heat_pumps": "Keine Wärmepumpe in diesem Konto",
       "pairing_not_found": "Keine Wärmepumpe im Kopplungsmodus gefunden. Ist der Kopplungsmodus an, und ist Home Assistant im selben Netz (mDNS, UDP 5353)?",
       "pairing_failed": "Kopplung fehlgeschlagen – Details im Log",

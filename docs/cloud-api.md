@@ -17,6 +17,14 @@ verwendeten Diensten").
 | `POST /auth/refresh` | `{"refreshToken"}`, Header `Authorization: Bearer <altes Access-Token>` | neue Tokens; 400/401 mit Text „access token still valid", wenn zu früh |
 | `POST /graphql` | `{"query", "variables"}`, Header `Authorization: Bearer …` | GraphQL; ohne Header **401 „no authorization header"** |
 
+**Herkunftsprüfung** (festgestellt am 14.10.2026): Der Server nimmt nur Anfragen mit
+`Origin: https://my.triplesolar.eu` an. Ohne diesen Header (oder mit einem fremden) antwortet
+er **403 „Unknown origin"**, noch vor der Prüfung der Zugangsdaten. Mit dem Header kommt bei
+falschen Zugangsdaten **401 „Wrong credentials"**. Der Browser setzt `Origin` selbst, die
+Integration schickt ihn bei jedem Aufruf mit. Ein 403 „Unknown origin" trotz Header meldet sie
+als eigenen Fehler (`cloud_rejected`), nicht als falsche Zugangsdaten. Dann hat sich die
+Schnittstelle geändert.
+
 Das Frontend erneuert 15 s vor Ablauf. Weitere Endpunkte unter `/auth/`:
 `activate-user`, `change-password`, `delete-account`, `request-activation-link`,
 `request-password-reset`, `reset-password`.

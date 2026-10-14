@@ -69,6 +69,7 @@
     "error": {
       "cannot_connect": "Cannot connect",
       "invalid_auth": "Invalid credentials",
+      "cloud_rejected": "The myTripleSolar cloud rejected the request before checking the credentials. The unofficial interface has probably changed; details are in the log.",
       "no_heat_pumps": "No heat pump in this account",
       "pairing_not_found": "No heat pump in pairing mode found. Is pairing mode enabled, and is Home Assistant in the same network (mDNS, UDP 5353)?",
       "pairing_failed": "Pairing failed – see the log",

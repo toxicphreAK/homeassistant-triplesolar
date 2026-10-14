@@ -255,6 +255,10 @@ CONFIG = {
     "error": {
         "cannot_connect": ("Cannot connect", "Verbindung fehlgeschlagen"),
         "invalid_auth": ("Invalid credentials", "Anmeldedaten ungültig"),
+        "cloud_rejected": (
+            "The myTripleSolar cloud rejected the request before checking the credentials. The unofficial interface has probably changed; details are in the log.",
+            "Die myTripleSolar-Cloud hat die Anfrage abgelehnt, bevor sie die Anmeldedaten geprüft hat. Vermutlich hat sich die inoffizielle Schnittstelle geändert; Details stehen im Log.",
+        ),
         "no_heat_pumps": ("No heat pump in this account", "Keine Wärmepumpe in diesem Konto"),
         "pairing_not_found": (
             "No heat pump in pairing mode found. Is pairing mode enabled, and is Home Assistant in the same network (mDNS, UDP 5353)?",

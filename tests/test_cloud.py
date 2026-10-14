@@ -12,9 +12,11 @@ import pytest
 from aiohttp import web
 
 from custom_components.triplesolar.cloud import (
+    BASE_URL,
     CloudAuthError,
     CloudClient,
     CloudError,
+    CloudRejectedError,
     _iso,
     jwt_expiry,
     latest_energy_totals,
@@ -36,6 +38,13 @@ class FakeCloud:
         self.valid: set[str] = set()
         self.queries: list[dict] = []
         self.password = "geheim"
+        self.origin = ""  # wie der echte Server: nur die eigene Herkunft
+
+    @web.middleware
+    async def check_origin(self, request: web.Request, handler):
+        if request.headers.get("Origin") != self.origin:
+            return web.Response(status=403, text="Unknown origin")
+        return await handler(request)
 
     def _issue(self) -> dict:
         access = make_jwt(time.time() + self.lifetime) + str(self.logins + self.refreshes)
@@ -104,7 +113,7 @@ class FakeCloud:
 @pytest.fixture
 async def cloud():
     fake = FakeCloud()
-    app = web.Application()
+    app = web.Application(middlewares=[fake.check_origin])
     app.router.add_post("/auth/login", fake.login)
     app.router.add_post("/auth/refresh", fake.refresh)
     app.router.add_post("/graphql", fake.graphql)
@@ -113,6 +122,7 @@ async def cloud():
     site = web.TCPSite(runner, "127.0.0.1", 0)
     await site.start()
     fake.url = f"http://127.0.0.1:{site._server.sockets[0].getsockname()[1]}"
+    fake.origin = fake.url
     async with aiohttp.ClientSession() as session:
         fake.session = session
         yield fake
@@ -133,6 +143,27 @@ async def test_login_and_list(cloud: FakeCloud) -> None:
 async def test_wrong_password(cloud: FakeCloud) -> None:
     with pytest.raises(CloudAuthError):
         await client_for(cloud, "falsch").login()
+
+
+async def test_foreign_origin_is_rejected_not_auth_error(cloud: FakeCloud) -> None:
+    # Herkunftsprüfung schlägt vor den Zugangsdaten zu — kein Reauth auslösen.
+    cloud.origin = "https://anders.example"
+    with pytest.raises(CloudRejectedError) as exc_info:
+        await client_for(cloud).login()
+    assert not isinstance(exc_info.value, CloudAuthError)
+
+
+async def test_origin_is_sent_on_every_request(cloud: FakeCloud) -> None:
+    cloud.lifetime = 5  # erzwingt /auth/refresh
+    client = CloudClient(cloud.session, "a@b.de", "geheim", base_url=cloud.url + "/")
+    await client.status("HP1")
+    await client.status("HP1")
+    assert cloud.refreshes >= 1
+
+
+def test_default_origin_is_the_web_frontend() -> None:
+    assert BASE_URL == "https://my.triplesolar.eu"
+    assert CloudClient(None, "a@b.de", "x")._origin == "https://my.triplesolar.eu"  # type: ignore[arg-type]
 
 
 async def test_refresh_before_expiry(cloud: FakeCloud) -> None:

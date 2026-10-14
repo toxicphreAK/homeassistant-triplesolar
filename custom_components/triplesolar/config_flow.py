@@ -22,7 +22,7 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
-from .cloud import CloudAuthError, CloudClient, CloudError, CloudHeatPump
+from .cloud import CloudAuthError, CloudClient, CloudError, CloudHeatPump, CloudRejectedError
 from .const import (
     CONF_CLIENT_CERT,
     CONF_CLIENT_KEY,
@@ -268,6 +268,9 @@ class TripleSolarConfigFlow(ConfigFlow, domain=DOMAIN):
                 self._cloud_pumps = await self._cloud.heat_pumps()
             except CloudAuthError:
                 errors["base"] = "invalid_auth"
+            except CloudRejectedError as exc:
+                _LOGGER.warning("myTripleSolar: %s", exc)
+                errors["base"] = "cloud_rejected"
             except CloudError as exc:
                 _LOGGER.warning("myTripleSolar: %s", exc)
                 errors["base"] = "cannot_connect"
@@ -323,6 +326,9 @@ class TripleSolarConfigFlow(ConfigFlow, domain=DOMAIN):
                 await client.login()
             except CloudAuthError:
                 errors["base"] = "invalid_auth"
+            except CloudRejectedError as exc:
+                _LOGGER.warning("myTripleSolar: %s", exc)
+                errors["base"] = "cloud_rejected"
             except CloudError:
                 errors["base"] = "cannot_connect"
             else:

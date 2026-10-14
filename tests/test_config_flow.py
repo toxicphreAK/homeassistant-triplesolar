@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.triplesolar.cloud import CloudAuthError, CloudHeatPump
+from custom_components.triplesolar.cloud import CloudAuthError, CloudHeatPump, CloudRejectedError
 from custom_components.triplesolar.const import (
     CONF_CLIENT_KEY,
     CONF_CONNECTION,
@@ -198,6 +198,16 @@ async def test_cloud_flow_invalid_auth(hass: HomeAssistant) -> None:
             result["flow_id"], {"email": "a@b.de", "password": "x"}
         )
     assert result["errors"] == {"base": "invalid_auth"}
+
+
+async def test_cloud_flow_rejected(hass: HomeAssistant) -> None:
+    rejected = CloudRejectedError("/auth/login: HTTP 403 Unknown origin")
+    with patch(f"{CF}.CloudClient.login", AsyncMock(side_effect=rejected)):
+        result = await start(hass, CONNECTION_CLOUD)
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], {"email": "a@b.de", "password": "x"}
+        )
+    assert result["errors"] == {"base": "cloud_rejected"}
 
 
 async def test_reauth(hass: HomeAssistant) -> None:

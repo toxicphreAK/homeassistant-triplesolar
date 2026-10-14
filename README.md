@@ -36,6 +36,12 @@ HACS → Benutzerdefinierte Repositories → dieses Repository (Kategorie „Int
 `custom_components/triplesolar/` nach `<config>/custom_components/` kopieren. Neustart,
 dann *Einstellungen → Geräte & Dienste → Integration hinzufügen → Triple Solar*.
 
+Icon und Logo bringt die Integration in `brand/` selbst mit. Home Assistant zeigt sie ab der
+Version, die lokale Markenbilder von Custom-Integrationen ausliefert (2026.10 tut es), ältere
+Versionen zeigen den Platzhalter. HACS nimmt seine Bilder weiter aus dem
+[brands-Repository](https://github.com/home-assistant/brands). Logo und Bildmarke gehören
+Triple Solar und kennzeichnen hier nur das unterstützte Gerät.
+
 ## Einrichtung
 
 ### Modbus TLS (Kopplung)
@@ -172,6 +178,7 @@ custom_components/triplesolar/
   coordinator.py  Abruf (Modbus/Cloud), Schreiben mit Rücklesen, mDNS-Neusuche bei IP-Wechsel
   config_flow.py  Dialoge: Kopplung (Fortschrittsschritt), TCP, Cloud, Reauth, Optionen
   sensor.py · binary_sensor.py · select.py · number.py · switch.py · diagnostics.py
+  brand/          Icon und Logo (hell/dunkel) aus dem Webauftritt von Triple Solar
 docs/             Modbus-API (Abschrift), Cloud-API, Regelung/Eingänge/§ 14a/SG Ready
 tools/            Übersetzungsgenerator, Probe-Werkzeuge für die Inbetriebnahme
 tests/            Fakes (Modbus, PKI, Cloud) und Tests

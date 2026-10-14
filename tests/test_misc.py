@@ -119,3 +119,22 @@ def test_integrate_step_long_scan_interval() -> None:
     _, p = integrate_step(None, 0, 1200, 1, max_gap_s=2.5 * 900)
     delta, _ = integrate_step(p, 905, 1200, 1, max_gap_s=2.5 * 900)
     assert delta == pytest.approx(1200 * 905 / 3_600_000)
+
+
+def test_brand_images_match_home_assistant_rules() -> None:
+    # Home Assistant liefert nur diese Dateinamen aus brand/ aus; Maße wie im brands-Repository.
+    from homeassistant.components.brands.const import ALLOWED_IMAGES
+
+    def size(path: Path) -> tuple[int, int]:
+        head = path.read_bytes()[:24]
+        assert head[:8] == b"\x89PNG\r\n\x1a\n", path.name
+        return int.from_bytes(head[16:20]), int.from_bytes(head[20:24])
+
+    images = {p.name: size(p) for p in (COMPONENT / "brand").iterdir()}
+    assert set(images) <= ALLOWED_IMAGES
+    assert images["icon.png"] == (256, 256)
+    assert images["icon@2x.png"] == (512, 512)
+    for name, (w, h) in images.items():
+        if "logo" in name:
+            low, high = (256, 512) if "@2x" in name else (128, 256)
+            assert low <= min(w, h) <= high, name

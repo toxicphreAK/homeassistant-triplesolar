@@ -181,3 +181,9 @@ docs/             Modbus-API (Abschrift), Cloud-API, Regelung/Eingänge/§ 14a/S
 tools/            Übersetzungsgenerator, Probe-Werkzeuge für die Inbetriebnahme
 tests/            Fakes (Modbus, PKI, Cloud) und Tests
 ```
+
+## Lizenz
+
+Der Code steht unter der [MIT-Lizenz](LICENSE). Ausgenommen sind Inhalte von Triple Solar:
+Icon und Logo in `custom_components/triplesolar/brand/` und die abgeschriebene
+Herstellerdokumentation in `docs/` bleiben bei Triple Solar.

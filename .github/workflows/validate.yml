@@ -25,6 +25,21 @@ jobs:
       - run: .venv/bin/ruff check . && .venv/bin/ruff format --check .
       - run: .venv/bin/python tools/quality/quality_scan.py --gate structural
 
+  # Ältestes unterstütztes Home Assistant (hacs.json). Die Paketstände von
+  # damals passen nicht mehr ohne Nachhilfe: aiohttp 3.11.13 ist inzwischen
+  # zurückgezogen (nur mit exakter Angabe installierbar), pycares 5 bricht aiodns.
+  tests-min:
+    name: Tests mit Home Assistant 2025.3 (Minimum)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.2
+      - run: uv venv --python 3.13 .venv
+      - run: >-
+          uv pip install --python .venv/bin/python
+          pytest-homeassistant-custom-component==0.13.225 aiohttp==3.11.13 "pycares<5"
+      - run: .venv/bin/python -m pytest -p no:cacheprovider
+
   hassfest:
     name: hassfest (Manifest, Übersetzungen)
     runs-on: ubuntu-latest

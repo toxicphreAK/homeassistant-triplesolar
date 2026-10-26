@@ -123,7 +123,8 @@ def test_integrate_step_long_scan_interval() -> None:
 
 def test_brand_images_match_home_assistant_rules() -> None:
     # Home Assistant liefert nur diese Dateinamen aus brand/ aus; Maße wie im brands-Repository.
-    from homeassistant.components.brands.const import ALLOWED_IMAGES
+    # Die brands-Komponente gibt es erst ab 2026.3, davor zeigt HA den Platzhalter.
+    brands = pytest.importorskip("homeassistant.components.brands.const")
 
     def size(path: Path) -> tuple[int, int]:
         head = path.read_bytes()[:24]
@@ -131,7 +132,7 @@ def test_brand_images_match_home_assistant_rules() -> None:
         return int.from_bytes(head[16:20]), int.from_bytes(head[20:24])
 
     images = {p.name: size(p) for p in (COMPONENT / "brand").iterdir()}
-    assert set(images) <= ALLOWED_IMAGES
+    assert set(images) <= brands.ALLOWED_IMAGES
     assert images["icon.png"] == (256, 256)
     assert images["icon@2x.png"] == (512, 512)
     for name, (w, h) in images.items():

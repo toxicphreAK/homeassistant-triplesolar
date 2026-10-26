@@ -58,6 +58,8 @@ Never edit `strings.json` or `translations/*.json` by hand. Edit the tables in `
 
 `tests/fakes.py` provides a fake Modbus server (TCP/TLS) with its own PKI that mimics the device's mutual TLS, plus a CSR signer. `test_cloud.py` contains a fake GraphQL cloud. `conftest.py` auto-enables custom integrations and mocks zeroconf for any test using `hass`. pytest runs with `asyncio_mode = "auto"`.
 
+**Minimum Home Assistant is 2025.3** (`hacs.json`), on Python 3.13. The floor is `AddConfigEntryEntitiesCallback`. CI runs the suite against both 2025.3.4 and the version in `uv.lock`. Using a newer HA API means raising `hacs.json` and the CI's `tests-min` job together.
+
 ## Domain constraints
 
 - § 14a EnWG power limiting is a hardware contact on the heat pump. Home Assistant only reads it and must never control it. See `docs/regelung-und-eingaenge.md`.

@@ -21,7 +21,7 @@ keine dokumentierte Zuordnung von Cloud-ID und Hostname.
 
 ## Voraussetzungen
 
-- Home Assistant **≥ 2026.10** (getestet mit 2026.10.4).
+- Home Assistant **≥ 2025.3** (die CI testet 2025.3.4 und die aktuelle Version).
 - Für Modbus: die Wärmepumpe **per Ethernet** im Heimnetz (die eingebaute SIM reicht nur
   für die Cloud), Firmware **≥ 2026.09.01.0** (Updates kommen automatisch per OTA).
 - Für die Kopplung: Home Assistant und Wärmepumpe im **selben Netzsegment** — mDNS
@@ -36,8 +36,8 @@ HACS → Benutzerdefinierte Repositories → dieses Repository (Kategorie „Int
 `custom_components/triplesolar/` nach `<config>/custom_components/` kopieren. Neustart,
 dann *Einstellungen → Geräte & Dienste → Integration hinzufügen → Triple Solar*.
 
-Icon und Logo bringt die Integration in `brand/` selbst mit, Home Assistant zeigt sie direkt
-an. Nur HACS nimmt seine Bilder aus dem
+Icon und Logo bringt die Integration in `brand/` selbst mit. Home Assistant zeigt sie ab
+2026.3, ältere Versionen zeigen den Platzhalter. HACS nimmt seine Bilder aus dem
 [brands-Repository](https://github.com/home-assistant/brands) und zeigt deshalb keins. Logo und Bildmarke gehören
 Triple Solar und kennzeichnen hier nur das unterstützte Gerät.
 

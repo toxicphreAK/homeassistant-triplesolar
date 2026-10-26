@@ -7,8 +7,7 @@ Home Assistant custom integration (`custom_components/triplesolar`, HACS) for th
 ## Commands
 
 ```sh
-uv venv --python 3.14 .venv
-uv pip install --python .venv/bin/python pytest-homeassistant-custom-component ruff radon vulture
+uv sync                                                      # .venv from uv.lock; `uv lock --upgrade` bumps the dev tools
 
 .venv/bin/python -m pytest                                   # all tests
 .venv/bin/python -m pytest tests/test_init.py::test_writes_reach_the_heat_pump   # single test

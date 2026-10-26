@@ -14,14 +14,14 @@ keine dokumentierte Zuordnung von Cloud-ID und Hostname.
 
 > **Stand:** gebaut gegen die Herstellerdoku (Stand 25.09.2026), das Demo-Repository des
 > Herstellers und das myTripleSolar-Frontend (09.10.2026); getestet gegen einen
-> nachgebauten Modbus-/TLS-Server und eine nachgebaute Cloud (64 Tests). **Noch nicht an
+> nachgebauten Modbus-/TLS-Server und eine nachgebaute Cloud (`tests/`). **Noch nicht an
 > einer echten Anlage gelaufen** — die offenen Punkte stehen in
 > [docs/modbus-api.md](docs/modbus-api.md#offene-punkte-am-laufenden-system-zu-prüfen) und
 > [docs/cloud-api.md](docs/cloud-api.md#offene-punkte); `tools/probe_*.py` klären sie.
 
 ## Voraussetzungen
 
-- Home Assistant **≥ 2025.10** (entwickelt und getestet mit 2026.10.0).
+- Home Assistant **≥ 2026.10** (getestet mit 2026.10.4).
 - Für Modbus: die Wärmepumpe **per Ethernet** im Heimnetz (die eingebaute SIM reicht nur
   für die Cloud), Firmware **≥ 2026.09.01.0** (Updates kommen automatisch per OTA).
 - Für die Kopplung: Home Assistant und Wärmepumpe im **selben Netzsegment** — mDNS
@@ -36,10 +36,9 @@ HACS → Benutzerdefinierte Repositories → dieses Repository (Kategorie „Int
 `custom_components/triplesolar/` nach `<config>/custom_components/` kopieren. Neustart,
 dann *Einstellungen → Geräte & Dienste → Integration hinzufügen → Triple Solar*.
 
-Icon und Logo bringt die Integration in `brand/` selbst mit. Home Assistant zeigt sie ab der
-Version, die lokale Markenbilder von Custom-Integrationen ausliefert (2026.10 tut es), ältere
-Versionen zeigen den Platzhalter. HACS nimmt seine Bilder weiter aus dem
-[brands-Repository](https://github.com/home-assistant/brands). Logo und Bildmarke gehören
+Icon und Logo bringt die Integration in `brand/` selbst mit, Home Assistant zeigt sie direkt
+an. Nur HACS nimmt seine Bilder aus dem
+[brands-Repository](https://github.com/home-assistant/brands) und zeigt deshalb keins. Logo und Bildmarke gehören
 Triple Solar und kennzeichnen hier nur das unterstützte Gerät.
 
 ## Einrichtung
@@ -145,9 +144,8 @@ Home Assistant liest den Zustand mit (Status „gesperrt", Leistung), steuert ih
 ## Entwicklung
 
 ```sh
-uv venv --python 3.14 .venv
-uv pip install --python .venv/bin/python pytest-homeassistant-custom-component ruff
-.venv/bin/python -m pytest          # 64 Tests: Register, Modbus/TLS, Kopplung, Cloud, HA-Setup, Flows
+uv sync                             # .venv aus uv.lock (Python ≥ 3.14.2, wie Home Assistant)
+.venv/bin/python -m pytest          # Register, Modbus/TLS, Kopplung, Cloud, HA-Setup, Flows
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
 .venv/bin/python tools/gen_translations.py   # strings.json + translations/{en,de}.json
 ```

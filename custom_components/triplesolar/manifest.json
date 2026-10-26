@@ -1,17 +1,20 @@
 {
   "domain": "triplesolar",
   "name": "Triple Solar PVT-Wärmepumpe",
-  "codeowners": [],
+  "codeowners": [
+    "@toxicphreAK"
+  ],
   "config_flow": true,
   "dependencies": [
     "zeroconf"
   ],
-  "documentation": "https://triplesolar.tettra.site/zusatzliche-dokumente/modbus-api-documentation",
+  "documentation": "https://github.com/toxicphreAK/homeassistant-triplesolar",
   "integration_type": "device",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/toxicphreAK/homeassistant-triplesolar/issues",
   "loggers": [
     "custom_components.triplesolar"
   ],
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.1.1"
 }

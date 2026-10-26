@@ -37,8 +37,7 @@ HACS → Benutzerdefinierte Repositories → dieses Repository (Kategorie „Int
 dann *Einstellungen → Geräte & Dienste → Integration hinzufügen → Triple Solar*.
 
 Icon und Logo bringt die Integration in `brand/` selbst mit. Home Assistant zeigt sie ab
-2026.3, ältere Versionen zeigen den Platzhalter. HACS nimmt seine Bilder aus dem
-[brands-Repository](https://github.com/home-assistant/brands) und zeigt deshalb keins. Logo und Bildmarke gehören
+2026.3, ältere Versionen zeigen den Platzhalter. Logo und Bildmarke gehören
 Triple Solar und kennzeichnen hier nur das unterstützte Gerät.
 
 ## Einrichtung

@@ -51,9 +51,8 @@ jobs:
     name: HACS-Validierung
     runs-on: ubuntu-latest
     steps:
-      # „brands": Icon und Logo liegen in custom_components/triplesolar/brand/,
-      # nicht im brands-Repository, das HACS hier prüft.
+      # Ohne „ignore": der HACS-Katalog nimmt nur Repositories auf, die alle
+      # Prüfungen bestehen. Icon und Logo findet die brands-Prüfung in brand/.
       - uses: hacs/action@22.5.0
         with:
           category: integration
-          ignore: brands

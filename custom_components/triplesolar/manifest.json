@@ -1,6 +1,10 @@
 {
   "domain": "triplesolar",
   "name": "Triple Solar PVT-Wärmepumpe",
+  "categories": [
+    "climate.heat_pumps_air_conditioning",
+    "energy"
+  ],
   "codeowners": [
     "@toxicphreAK"
   ],
@@ -16,5 +20,5 @@
     "custom_components.triplesolar"
   ],
   "requirements": [],
-  "version": "0.1.2"
+  "version": "0.1.3"
 }

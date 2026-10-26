@@ -1,5 +1,10 @@
 {
   "name": "Triple Solar PVT-Wärmepumpe",
   "homeassistant": "2025.3.0",
-  "render_readme": true
+  "render_readme": true,
+  "country": [
+    "NL",
+    "BE",
+    "DE"
+  ]
 }
